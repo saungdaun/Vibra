@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/bluetoothFragment"
+        android:title="Bluetooth"/>
+
+    <item android:id="@+id/calibrationFragment"
+        android:title="Calibration"/>
+
+    <item android:id="@+id/surveyFragment"
+        android:title="Survey"/>
+
+    <item android:id="@+id/dataFragment"
+        android:title="Data Logger"/>
+
+    <item android:id="@+id/aboutFragment"
+        android:title="About"/>
+
+    <item android:id="@+id/helpFragment"
+        android:title="Help"/>
+
+</menu>
