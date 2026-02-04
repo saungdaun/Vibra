@@ -3,6 +3,7 @@ package zaujaani.vibra.core.bluetooth
 import android.Manifest
 import android.bluetooth.BluetoothDevice
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 
@@ -11,20 +12,19 @@ object BluetoothReconnectEngine {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var reconnectJob: Job? = null
 
-    // ===============================
-    // SAVE DEVICE
-    // ===============================
     fun remember(device: BluetoothDevice) {
         lastDevice = device
+        Log.d("BluetoothReconnectEngine", "Remembering device: ${device.address}")
     }
 
-    // ===============================
-    // START ENGINE
-    // ===============================
     fun start() {
-        if (reconnectJob?.isActive == true) return
+        if (reconnectJob?.isActive == true) {
+            Log.d("BluetoothReconnectEngine", "⚠️ Reconnect engine already running")
+            return
+        }
 
         reconnectJob = scope.launch {
+            Log.d("BluetoothReconnectEngine", "🔄 Auto-reconnect engine started")
             while (isActive) {
                 delay(4000)
                 val state = BluetoothStateMachine.state.value
@@ -33,7 +33,6 @@ object BluetoothReconnectEngine {
                     val device = lastDevice ?: continue
                     val context = BluetoothGateway.getContext()
 
-                    // ✅ Explicitly check permissions where the sensitive call happens
                     val hasConnectPermission = ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.BLUETOOTH_CONNECT
@@ -41,49 +40,35 @@ object BluetoothReconnectEngine {
 
                     if (hasConnectPermission) {
                         try {
-                            // The lint warning usually triggers on device.name or connect()
-                            BluetoothStateMachine.update(ConnectionState.Connecting(device.name ?: "Unknown Device"))
+                            val deviceName = try {
+                                device.name ?: "Unknown Device"
+                            } catch (e: SecurityException) {
+                                "Unknown Device"
+                            }
+
+                            Log.d("BluetoothReconnectEngine", "🔄 Attempting reconnect to $deviceName")
+                            BluetoothStateMachine.updateSafe(ConnectionState.Connecting(deviceName))
                             BluetoothSocketManager.connect(device)
                         } catch (e: SecurityException) {
-                            // 🛡️ Handle the case where permission is revoked at runtime
+                            Log.e("BluetoothReconnectEngine", "SecurityException during reconnect", e)
                             stop()
+                        } catch (_: Exception) {
+                            Log.d("BluetoothReconnectEngine", "Reconnect attempt failed")
                         }
                     } else {
+                        Log.w("BluetoothReconnectEngine", "No Bluetooth Connect permission, stopping")
                         stop()
                     }
                 }
             }
         }
-    }
-    // ===============================
-    // PERMISSION CHECK (SAFE WAY)
-    // ===============================
-    private fun hasBluetoothPermission(): Boolean {
-        return try {
-            val context = BluetoothGateway.getContext()
 
-            // 🔥 CHECK SECURITY PERMISSION DENGAN AMAN
-            val hasConnectPermission = ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) == PackageManager.PERMISSION_GRANTED
-
-            val hasScanPermission = ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) == PackageManager.PERMISSION_GRANTED
-
-            hasConnectPermission && hasScanPermission
-        } catch (e: Exception) {
-            false
-        }
+        Log.d("BluetoothReconnectEngine", "🔄 Auto-reconnect engine started")
     }
 
-    // ===============================
-    // STOP ENGINE
-    // ===============================
     fun stop() {
         reconnectJob?.cancel()
         reconnectJob = null
+        Log.d("BluetoothReconnectEngine", "🛑 Auto-reconnect engine stopped")
     }
 }

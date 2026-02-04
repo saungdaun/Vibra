@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -24,7 +25,146 @@
             android:textColor="@android:color/white"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Sensor Data Display -->
+        <!-- Sensor Data Container -->
+        <LinearLayout
+            android:id="@+id/sensorContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:background="#F5F5F5"
+            android:layout_marginBottom="16dp">
+
+            <!-- Trip Distance & STA -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tvTripDistance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0.000 km"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvSta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="STA 00+000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <!-- Speed & Elevation -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tvSpeed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0.0 km/h"
+                    android:textSize="14sp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvElevation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0.00 m"
+                    android:textSize="14sp"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <!-- Info Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tvBattery"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0.00 V"
+                    android:textSize="12sp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvSessionId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SID: 0"
+                    android:textSize="12sp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvPacketCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Packets: 0"
+                    android:textSize="12sp"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <!-- State & Last Update -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/tvState"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="State: READY"
+                    android:textSize="12sp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvLastUpdate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Last: -"
+                    android:textSize="10sp"
+                    android:gravity="center"
+                    android:textColor="#666666"/>
+            </LinearLayout>
+
+            <!-- Raw Data Display -->
+            <TextView
+                android:id="@+id/tvRawData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="RAW: -"
+                android:textSize="10sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="#666666"/>
+
+        </LinearLayout>
+
+        <!-- Log Header with Controls -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,94 +172,46 @@
             android:layout_marginBottom="8dp">
 
             <TextView
-                android:id="@+id/tvTripDistance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0.000 km"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:text="Log"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/tvSta"
-                android:layout_width="0dp"
+                android:id="@+id/tvLogCount"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="STA 00+000"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:text="0 logs"
+                android:textSize="12sp"
+                android:textColor="#666666"/>
+
+            <Switch
+                android:id="@+id/switchAutoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto"
+                android:textSize="10sp"
+                android:checked="true"/>
+
+            <Button
+                android:id="@+id/btnRefresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Refresh"
+                android:paddingHorizontal="8dp"
+                android:textSize="10sp"/>
         </LinearLayout>
 
-        <LinearLayout
+        <!-- Log List -->
+        <ListView
+            android:id="@+id/logListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:id="@+id/tvSpeed"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0.0 km/h"
-                android:textSize="14sp"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/tvElevation"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0.00 m"
-                android:textSize="14sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <!-- Info Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:id="@+id/tvBattery"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0.00 V"
-                android:textSize="12sp"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/tvSessionId"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="SID: 0"
-                android:textSize="12sp"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/tvPacketCount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Packets: 0"
-                android:textSize="12sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <!-- State -->
-        <TextView
-            android:id="@+id/tvState"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="State: READY"
-            android:textSize="12sp"
-            android:gravity="center"
+            android:layout_height="250dp"
+            android:background="#f8f8f8"
+            android:divider="#dddddd"
+            android:dividerHeight="1dp"
             android:layout_marginBottom="16dp"/>
 
         <!-- Command Buttons Grid -->
@@ -163,7 +255,8 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="2dp"
-                android:text="RESET"/>
+                android:text="RESET"
+                android:backgroundTint="#9C27B0"/>
 
             <Button
                 android:id="@+id/btnGetData"
@@ -299,23 +392,6 @@
                 android:layout_height="wrap_content"
                 android:text="SEND"/>
         </LinearLayout>
-
-        <!-- Log Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Log"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <ListView
-            android:id="@+id/logListView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="#f0f0f0"
-            android:divider="#cccccc"
-            android:dividerHeight="1dp"/>
 
     </LinearLayout>
 </ScrollView>

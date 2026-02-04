@@ -181,4 +181,17 @@
     <color name="chip_background">#FFFFFFFF</color>
     <color name="chip_stroke">#FFE0E0E0</color>
     <color name="chip_ripple">#1F000000</color>
+
+
+
+        <!-- Connection Status Colors -->
+        <color name="connected">#4CAF50</color>
+        <color name="connecting">#FF9800</color>
+        <color name="disconnected">#F44336</color>
+
+
+        <!-- UI Colors -->
+        <color name="sensor_update">#E8F5E8</color>
+        <color name="refresh">#E3F2FD</color>
+
 </resources>

@@ -1,5 +1,6 @@
 package zaujaani.vibra.core.bluetooth
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -7,51 +8,45 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.StateFlow
-import android.util.Log
-import android.Manifest
+import java.lang.ref.WeakReference
+
 object BluetoothGateway {
 
-    // 🔥 Gunakan application context untuk menghindari memory leak
-    private var appContext: Context? = null
+    private var appContext: WeakReference<Context>? = null
 
     private val adapter: BluetoothAdapter? by lazy {
-        if (appContext == null) return@lazy null
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val bluetoothManager = appContext?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
-            bluetoothManager?.adapter
-        } else {
-            @Suppress("DEPRECATION")
-            BluetoothAdapter.getDefaultAdapter()
+        appContext?.get()?.let { context ->
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+                    bluetoothManager?.adapter
+                } else {
+                    @Suppress("DEPRECATION")
+                    BluetoothAdapter.getDefaultAdapter()
+                }
+            } catch (e: Exception) {
+                Log.e("BluetoothGateway", "Failed to get adapter", e)
+                null
+            }
         }
     }
 
-    // 🔥 SINGLE SOURCE OF TRUTH
     val state: StateFlow<ConnectionState>
         get() = BluetoothStateMachine.state
 
-    // ===============================
-    // INIT (WAJIB dari Service/Application)
-    // ===============================
-
     fun init(context: Context) {
-        appContext = context.applicationContext
-        Log.d("BluetoothGateway", "Initialized with context")
+        appContext = WeakReference(context.applicationContext)
+        Log.d("BluetoothGateway", "✅ Initialized with application context")
     }
 
-    // 🔥 Public untuk diakses oleh BluetoothSocketManager
     fun getContext(): Context {
-        return appContext ?: throw IllegalStateException(
-            "BluetoothGateway not initialized. Start VibraBluetoothService first."
+        return appContext?.get() ?: throw IllegalStateException(
+            "BluetoothGateway not initialized. Call init() first."
         )
     }
-    // Tambahkan di dalam object BluetoothGateway:
-
-// ===============================
-// PERMISSION CHECKERS (Public)
-// ===============================
 
     fun hasBluetoothConnectPermission(): Boolean {
         return try {
@@ -69,6 +64,7 @@ object BluetoothGateway {
                 ) == PackageManager.PERMISSION_GRANTED
             }
         } catch (e: Exception) {
+            Log.e("BluetoothGateway", "Permission check failed", e)
             false
         }
     }
@@ -83,7 +79,7 @@ object BluetoothGateway {
                 ) == PackageManager.PERMISSION_GRANTED
             } else {
                 @Suppress("DEPRECATION")
-                val hasBluetooth = ContextCompat.checkSelfPermission(
+                val hasBluetoothAdmin = ContextCompat.checkSelfPermission(
                     context,
                     Manifest.permission.BLUETOOTH_ADMIN
                 ) == PackageManager.PERMISSION_GRANTED
@@ -97,118 +93,63 @@ object BluetoothGateway {
                             Manifest.permission.ACCESS_COARSE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
 
-                hasBluetooth && hasLocation
+                hasBluetoothAdmin && hasLocation
             }
         } catch (e: Exception) {
+            Log.e("BluetoothGateway", "Permission check failed", e)
             false
         }
     }
 
-    fun hasAllBluetoothPermissions(): Boolean {
+    private fun hasAllBluetoothPermissions(): Boolean {
         return hasBluetoothConnectPermission() && hasBluetoothScanPermission()
     }
-
-    // ===============================
-    // PERMISSION HELPERS
-    // ===============================
-
-    private fun hasBluetoothConnectPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ContextCompat.checkSelfPermission(
-                context,
-                "android.permission.BLUETOOTH_CONNECT"
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            // Untuk API < 31, gunakan permission lama
-            @Suppress("DEPRECATION")
-            ContextCompat.checkSelfPermission(
-                context,
-                "android.permission.BLUETOOTH"
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private fun hasBluetoothScanPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ContextCompat.checkSelfPermission(
-                context,
-                "android.permission.BLUETOOTH_SCAN"
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            // Untuk API < 31, gunakan permission lama + location
-            @Suppress("DEPRECATION")
-            val hasBluetooth = ContextCompat.checkSelfPermission(
-                context,
-                "android.permission.BLUETOOTH_ADMIN"
-            ) == PackageManager.PERMISSION_GRANTED
-
-            val hasLocation = ContextCompat.checkSelfPermission(
-                context,
-                "android.permission.ACCESS_FINE_LOCATION"
-            ) == PackageManager.PERMISSION_GRANTED
-
-            hasBluetooth && hasLocation
-        }
-    }
-
-    // ===============================
-    // CONNECT
-    // ===============================
 
     @SuppressLint("MissingPermission")
     fun connect(device: BluetoothDevice) {
         val currentState = state.value
 
-        // 🛑 anti spam tombol
         if (currentState is ConnectionState.Connected || currentState is ConnectionState.Connecting) {
+            Log.d("BluetoothGateway", "⚠️ Already connecting/connected, ignoring")
             return
         }
 
         if (!isBluetoothAvailable()) {
-            BluetoothStateMachine.update(
-                ConnectionState.Error("Bluetooth not available")
+            BluetoothStateMachine.updateSafe(
+                ConnectionState.Error("Bluetooth not available on this device")
             )
             return
         }
 
         if (!isBluetoothEnabled()) {
-            BluetoothStateMachine.update(
-                ConnectionState.Error("Bluetooth disabled")
+            BluetoothStateMachine.updateSafe(
+                ConnectionState.Error("Please enable Bluetooth first")
             )
             return
         }
 
-        // 🔥 EXPLICIT PERMISSION CHECK
-        val context = getContext()
-
-        if (!hasBluetoothConnectPermission(context)) {
-            BluetoothStateMachine.update(
-                ConnectionState.Error("Bluetooth Connect permission required")
+        if (!hasAllBluetoothPermissions()) {
+            BluetoothStateMachine.updateSafe(
+                ConnectionState.Error("Bluetooth permissions required")
             )
             return
         }
 
-        if (!hasBluetoothScanPermission(context)) {
-            BluetoothStateMachine.update(
-                ConnectionState.Error("Bluetooth Scan/Location permission required")
-            )
-            return
+        val deviceName = try {
+            device.name ?: device.address
+        } catch (e: SecurityException) {
+            device.address
         }
 
+        BluetoothStateMachine.updateSafe(ConnectionState.Connecting(deviceName))
         BluetoothSocketManager.connect(device)
     }
 
-    // ===============================
-    // DISCONNECT
-    // ===============================
-
     fun disconnect() {
+        Log.d("BluetoothGateway", "🛑 Disconnecting Bluetooth")
         BluetoothSocketManager.disconnect()
+        BluetoothReconnectEngine.stop()
     }
-
-    // ===============================
-    // CHECK DEVICE
-    // ===============================
 
     fun isBluetoothAvailable(): Boolean {
         return adapter != null
@@ -217,49 +158,39 @@ object BluetoothGateway {
     @SuppressLint("MissingPermission")
     fun isBluetoothEnabled(): Boolean {
         return try {
-            // 🔥 Check permission first
-            val context = getContext()
-
-            if (!hasBluetoothConnectPermission(context)) return false
-
+            if (!hasBluetoothConnectPermission()) {
+                return false
+            }
             adapter?.isEnabled == true
-        } catch (_: SecurityException) {
+        } catch (e: SecurityException) {
+            Log.e("BluetoothGateway", "SecurityException checking Bluetooth", e)
             false
         } catch (_: Exception) {
             false
         }
     }
 
-    // ===============================
-    // BONDED DEVICES
-    // ===============================
-
     @SuppressLint("MissingPermission")
     fun bondedDevices(): Set<BluetoothDevice> {
         return try {
-            // 🔥 Check permission first
-            val context = getContext()
-
-            if (!hasBluetoothConnectPermission(context)) {
-                BluetoothStateMachine.update(
-                    ConnectionState.Error("Bluetooth permission denied for bonded devices")
-                )
+            if (!hasBluetoothConnectPermission()) {
+                Log.w("BluetoothGateway", "No permission for bonded devices")
                 return emptySet()
             }
 
             adapter?.bondedDevices ?: emptySet()
         } catch (e: SecurityException) {
-            BluetoothStateMachine.update(
-                ConnectionState.Error("Security exception: ${e.message}")
-            )
+            Log.e("BluetoothGateway", "SecurityException getting bonded devices", e)
             emptySet()
         } catch (_: Exception) {
             emptySet()
         }
     }
 
-    // Clean up method
     fun cleanup() {
+        Log.d("BluetoothGateway", "🧹 Cleaning up BluetoothGateway")
+        disconnect()
+        appContext?.clear()
         appContext = null
     }
 }
