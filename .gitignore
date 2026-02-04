@@ -1,15 +1,64 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+############################
+# ANDROID / KOTLIN PRO
+############################
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local config (SDK path, dll)
 local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# Navigation editor temp
+.idea/navEditor.xml
+
+# Asset wizard
+.idea/assetWizardSettings.xml
+
+# Keystore (JANGAN PERNAH MASUK REPO)
+*.jks
+*.keystore
+*.pem
+
+# Google Services (kadang berisi credential)
+google-services.json
+
+# Build native
+.externalNativeBuild/
+.cxx/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Captures dari Android Studio
+captures/
+
+# Kotlin cache
+.kotlin/
+
+############################
+# OPTIONAL BUT VERY SMART
+############################
+
+# VSCode (kalau ada yang buka pake ini)
+.vscode/
+
+# Environment file
+.env
+
+# Temp files
+*.tmp
+*.swp
+
+# Mac spotlight
+.Spotlight-V100
+.Trashes

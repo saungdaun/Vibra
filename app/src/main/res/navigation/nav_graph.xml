@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/bluetoothFragment">
 
+    <!-- Bluetooth Fragment -->
     <fragment
         android:id="@+id/bluetoothFragment"
         android:name="zaujaani.vibra.ui.bluetooth.BluetoothFragment"
-        android:label="Bluetooth"/>
+        android:label="Bluetooth"
+        tools:layout="@layout/fragment_bluetooth">
 
+        <action
+            android:id="@+id/action_bluetooth_to_calibration"
+            app:destination="@id/calibrationFragment" />
+    </fragment>
+
+    <!-- Calibration Fragment -->
     <fragment
         android:id="@+id/calibrationFragment"
         android:name="zaujaani.vibra.ui.calibration.CalibrationFragment"
-        android:label="Calibration"/>
+        android:label="Calibration"
+        tools:layout="@layout/fragment_calibration">
 
+        <action
+            android:id="@+id/action_calibration_to_bluetooth"
+            app:destination="@id/bluetoothFragment" />
+    </fragment>
+
+    <!-- Survey Fragment -->
     <fragment
         android:id="@+id/surveyFragment"
         android:name="zaujaani.vibra.ui.survey.SurveyFragment"
-        android:label="Survey"/>
+        android:label="Survey"
+        tools:layout="@layout/fragment_survey" />
 
+    <!-- Data Logger Fragment -->
     <fragment
         android:id="@+id/dataFragment"
         android:name="zaujaani.vibra.ui.data.DataFragment"
-        android:label="Data"/>
+        android:label="Data Logger"
+        tools:layout="@layout/fragment_data" />
 
+    <!-- About Fragment -->
     <fragment
         android:id="@+id/aboutFragment"
         android:name="zaujaani.vibra.ui.about.AboutFragment"
-        android:label="About"/>
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
 
+    <!-- Help Fragment -->
     <fragment
         android:id="@+id/helpFragment"
         android:name="zaujaani.vibra.ui.help.HelpFragment"
-        android:label="Help"/>
+        android:label="Help"
+        tools:layout="@layout/fragment_help" />
 
 </navigation>
-

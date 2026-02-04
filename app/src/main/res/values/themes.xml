@@ -1,9 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Vibra" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Theme.Vibra" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/vibra_primary</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/vibra_on_primary</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/vibra_secondary</item>
+        <item name="colorSecondaryVariant">@color/vibra_tertiary</item>
+        <item name="colorOnSecondary">@color/vibra_on_secondary</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/vibra_background</item>
+        <item name="android:colorBackground">@color/vibra_background</item>
+
+        <!-- Remove colorBackground - use android:colorBackground instead -->
+
+        <!-- Material Components -->
+        <item name="materialButtonStyle">@style/Widget.Vibra.Button</item>
+        <item name="cardViewStyle">@style/Widget.Vibra.CardView</item>
+
+        <!-- Toolbar -->
+        <item name="toolbarStyle">@style/Widget.Vibra.Toolbar</item>
+
+        <!-- EditText -->
+        <item name="editTextStyle">@style/Widget.Vibra.EditText</item>
+
+        <!-- Switch -->
+        <item name="switchStyle">@style/Widget.Vibra.Switch</item>
+
+        <!-- Navigation Drawer -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="navigationViewStyle">@style/Widget.Vibra.NavigationView</item>
     </style>
 
-    <style name="Theme.Vibra" parent="Base.Theme.Vibra" />
+    <!-- DrawerArrowStyle (CRITICAL for hamburger icon) -->
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+        <item name="drawableSize">24dp</item>
+        <item name="barLength">18dp</item>
+        <item name="arrowHeadLength">10dp</item>
+        <item name="arrowShaftLength">10dp</item>
+        <item name="gapBetweenBars">3dp</item>
+        <item name="thickness">2dp</item>
+    </style>
+
+    <!-- Button Style -->
+    <style name="Widget.Vibra.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/button_primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <!-- CardView Style -->
+    <style name="Widget.Vibra.CardView" parent="CardView">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <!-- Toolbar Style -->
+    <style name="Widget.Vibra.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/white</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- EditText Style -->
+    <style name="Widget.Vibra.EditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/edittext_border</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="boxBackgroundColor">@color/edittext_background</item>
+    </style>
+
+    <!-- Switch Style -->
+    <style name="Widget.Vibra.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:thumbTint">@color/switch_thumb</item>
+        <item name="trackTint">@color/switch_track</item>
+    </style>
+
+    <!-- NavigationView Style -->
+    <style name="Widget.Vibra.NavigationView" parent="Widget.MaterialComponents.NavigationView">
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
+        <item name="itemBackground">@drawable/nav_item_background_selector</item>
+        <item name="android:background">@color/navigation_background</item>
+        <item name="android:elevation">16dp</item>
+    </style>
+
+    <!-- Dark theme variation -->
+    <style name="Theme.Vibra.Dark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Dark theme specific colors -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:colorBackground">@color/black</item>
+    </style>
 </resources>

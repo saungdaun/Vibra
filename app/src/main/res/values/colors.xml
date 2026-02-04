@@ -1,5 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Material Design Color Palette -->
+    <!-- Primary Colors -->
+    <color name="purple_50">#F3E5F5</color>
+    <color name="purple_100">#E1BEE7</color>
+    <color name="purple_200">#CE93D8</color>
+    <color name="purple_300">#BA68C8</color>
+    <color name="purple_400">#AB47BC</color>
+    <color name="purple_500">#9C27B0</color>
+    <color name="purple_600">#8E24AA</color>
+    <color name="purple_700">#7B1FA2</color>
+    <color name="purple_800">#6A1B9A</color>
+    <color name="purple_900">#4A148C</color>
+
+    <!-- Secondary Colors (Teal) -->
+    <color name="teal_50">#E0F2F1</color>
+    <color name="teal_100">#B2DFDB</color>
+    <color name="teal_200">#80CBC4</color>
+    <color name="teal_300">#4DB6AC</color>
+    <color name="teal_400">#26A69A</color>
+    <color name="teal_500">#009688</color>
+    <color name="teal_600">#00897B</color>
+    <color name="teal_700">#00796B</color>
+    <color name="teal_800">#00695C</color>
+    <color name="teal_900">#004D40</color>
+
+    <!-- Status Colors -->
+    <color name="colorPrimary">@color/purple_500</color>
+    <color name="colorPrimaryDark">@color/purple_700</color>
+    <color name="colorAccent">@color/teal_200</color>
+
+    <!-- UI Colors -->
+    <color name="background">#FFF5F5F5</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="error">#FFB00020</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">@color/black</color>
+    <color name="text_secondary">#8A000000</color>
+    <color name="text_disabled">#61000000</color>
+    <color name="text_inverse">@color/white</color>
+
+    <!-- Icon Colors -->
+    <color name="icon_active">#8A000000</color>
+    <color name="icon_inactive">#61000000</color>
+
+    <!-- Divider Color -->
+    <color name="divider">#1F000000</color>
+
+    <!-- Shadow Color -->
+    <color name="shadow">#33000000</color>
+
+    <!-- Status Colors for Bluetooth -->
+    <color name="connected_green">#FF4CAF50</color>
+    <color name="connected_green_light">#FFC8E6C9</color>
+    <color name="connecting_orange">#FFFF9800</color>
+    <color name="connecting_orange_light">#FFFFE0B2</color>
+    <color name="disconnected_red">#FFF44336</color>
+    <color name="disconnected_red_light">#FFFFCDD2</color>
+    <color name="error_red">#FFD32F2F</color>
+    <color name="error_red_light">#FFFFEBEE</color>
+
+    <!-- Button Colors -->
+    <color name="button_primary">@color/colorPrimary</color>
+    <color name="button_secondary">@color/colorAccent</color>
+    <color name="button_disabled">#FFCCCCCC</color>
+
+    <!-- Card Colors -->
+    <color name="card_background">@color/white</color>
+    <color name="card_shadow">#0D000000</color>
+
+    <!-- List Item Colors -->
+    <color name="list_item_background">@color/white</color>
+    <color name="list_item_selected">#FFE0E0E0</color>
+    <color name="list_divider">#FFE0E0E0</color>
+
+    <!-- EditText Colors -->
+    <color name="edittext_background">#FFFFFFFF</color>
+    <color name="edittext_border">#FFBDBDBD</color>
+    <color name="edittext_focused">@color/colorPrimary</color>
+
+    <!-- Switch Colors -->
+    <color name="switch_track">#FFBDBDBD</color>
+    <color name="switch_thumb">@color/white</color>
+
+    <!-- Progress Bar Colors -->
+    <color name="progress_primary">@color/colorPrimary</color>
+    <color name="progress_background">#FFE0E0E0</color>
+
+    <!-- Tab Colors -->
+    <color name="tab_selected">@color/colorPrimary</color>
+    <color name="tab_unselected">#FF757575</color>
+    <color name="tab_indicator">@color/colorPrimary</color>
+
+    <!-- Navigation Components -->
+    <color name="navigation_background">@color/white</color>
+    <color name="navigation_item_selected">#FFEDE7F6</color>
+    <color name="navigation_item_text">#FF212121</color>
+    <color name="navigation_item_icon">#FF757575</color>
+
+    <!-- Bluetooth Specific Colors -->
+    <color name="bluetooth_blue">#FF2196F3</color>
+    <color name="bluetooth_blue_light">#FFBBDEFB</color>
+    <color name="bluetooth_device_item">#FFF5F5F5</color>
+    <color name="bluetooth_device_selected">#FFE3F2FD</color>
+
+    <!-- Data Visualization Colors -->
+    <color name="chart_line_primary">@color/purple_500</color>
+    <color name="chart_line_secondary">@color/teal_500</color>
+    <color name="chart_area">#1F9C27B0</color>
+    <color name="chart_grid">#1F000000</color>
+
+    <!-- Log Colors -->
+    <color name="log_debug">#FF2196F3</color>
+    <color name="log_info">#FF4CAF50</color>
+    <color name="log_warning">#FFFF9800</color>
+    <color name="log_error">#FFF44336</color>
+
+    <!-- Gradient Colors (for future use) -->
+    <color name="gradient_start">@color/purple_500</color>
+    <color name="gradient_end">@color/teal_500</color>
+
+    <!-- Transparent Colors -->
+    <color name="transparent">#00000000</color>
+    <color name="semi_transparent_black">#80000000</color>
+    <color name="semi_transparent_white">#80FFFFFF</color>
+
+    <!-- Vibra Brand Colors -->
+    <color name="vibra_primary">#FF6200EE</color>
+    <color name="vibra_secondary">#FF03DAC6</color>
+    <color name="vibra_tertiary">#FF018786</color>
+    <color name="vibra_background">#FFFFFBFE</color>
+    <color name="vibra_surface">#FFFFFBFE</color>
+    <color name="vibra_on_primary">#FFFFFFFF</color>
+    <color name="vibra_on_secondary">#FF000000</color>
+    <color name="vibra_on_background">#FF1C1B1F</color>
+    <color name="vibra_on_surface">#FF1C1B1F</color>
+
+    <!-- Material Design Color Attributes (for theme) -->
+    <color name="material_color_primary">@color/purple_500</color>
+    <color name="material_color_primary_variant">@color/purple_700</color>
+    <color name="material_color_secondary">@color/teal_200</color>
+    <color name="material_color_secondary_variant">@color/teal_700</color>
+    <color name="material_color_on_primary">@color/white</color>
+    <color name="material_color_on_secondary">@color/black</color>
+    <color name="material_color_surface">@color/white</color>
+    <color name="material_color_background">@color/white</color>
+    <color name="material_color_error">#FFB00020</color>
+    <color name="material_color_on_surface">@color/black</color>
+    <color name="material_color_on_background">@color/black</color>
+    <color name="material_color_on_error">@color/white</color>
+    <!-- Nav Item Colors -->
+    <color name="nav_item_color">#FF000000</color>
+
+    <!-- Optional: Add state colors -->
+    <color name="nav_item_selected">#2196F3</color>
+    <!-- Bottom Navigation Colors (Light Theme) -->
+    <color name="bottom_nav_icon_tint_dark">#FF757575</color>
+    <color name="bottom_nav_text_tint_dark">#FF757575</color>
+    <color name="bottom_nav_background_dark">@android:color/transparent</color>
+    <color name="bottom_nav_icon_tint_selector_dark">#FF757575</color>
+    <color name="bottom_nav_text_tint_selector_dark">#FF757575</color>
+    <color name="bottom_nav_background_selector_dark">@android:color/transparent</color>
+
+    <!-- Chip Colors (Light Theme) -->
+    <color name="chip_background_dark">#FFFFFFFF</color>
+    <color name="chip_stroke_dark">#FFE0E0E0</color>
+    <color name="chip_ripple_dark">#1F000000</color>
+
+    <!-- Bottom Navigation Colors (Light Theme - additional) -->
+    <color name="bottom_nav_icon_tint_selector">@color/icon_active</color>
+    <color name="bottom_nav_text_tint_selector">@color/text_primary</color>
+    <color name="bottom_nav_background_selector">@android:color/transparent</color>
+
+    <!-- Chip Colors (Light Theme - additional) -->
+    <color name="chip_background">#FFFFFFFF</color>
+    <color name="chip_stroke">#FFE0E0E0</color>
+    <color name="chip_ripple">#1F000000</color>
 </resources>

@@ -5,19 +5,33 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import zaujaani.vibra.R
 
 class VibraBluetoothService : Service() {
 
+    companion object {
+        private const val NOTIFICATION_ID = 99
+        private const val CHANNEL_ID = "vibra_bluetooth_channel"
+        private const val CHANNEL_NAME = "Bluetooth Logger Service"
+    }
+
     override fun onCreate() {
         super.onCreate()
 
-        startForeground(99, notification())
+        // 1. Buat notification channel
+        createNotificationChannel()
 
-        // boot bluetooth engine sekali
-        BluetoothGateway.init(this)
+        // 2. Buat notification
+        val notification = buildNotification()
+
+        // 3. Start foreground service dengan notification
+        startForeground(NOTIFICATION_ID, notification)
+
+        // 4. Initialize Bluetooth
+        BluetoothGateway.init(applicationContext)
     }
 
     override fun onStartCommand(
@@ -25,30 +39,38 @@ class VibraBluetoothService : Service() {
         flags: Int,
         startId: Int
     ): Int {
-
         return START_STICKY
     }
 
-    private fun notification(): Notification {
+    override fun onDestroy() {
+        super.onDestroy()
+        BluetoothGateway.cleanup()
+    }
 
-        val channelId = "vibra_bt"
-
-        val manager =
-            getSystemService(NotificationManager::class.java)
-
-        val channel =
-            NotificationChannel(
-                channelId,
-                "Bluetooth Logger",
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_LOW
-            )
+            ).apply {
+                description = "Background Bluetooth service for Vibra Logger"
+                setShowBadge(false)
+            }
 
-        manager.createNotificationChannel(channel)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 
-        return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Vibra Logger Running")
-            .setContentText("Bluetooth active")
+    private fun buildNotification(): Notification {
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Vibra Logger")
+            .setContentText("Bluetooth service running")
             .setSmallIcon(R.mipmap.ic_launcher)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setOngoing(true)
             .build()
     }
 

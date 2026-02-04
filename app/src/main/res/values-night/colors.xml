@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic colors (dark theme) -->
+    <color name="black">#FFFFFFFF</color> <!-- Inverted for dark theme -->
+    <color name="white">#FF000000</color>
+
+    <!-- Material Design Color Palette for Dark Theme -->
+    <!-- Primary Colors (lighter shades for dark theme) -->
+    <color name="purple_50">#4A148C</color>
+    <color name="purple_100">#6A1B9A</color>
+    <color name="purple_200">#7B1FA2</color>
+    <color name="purple_300">#8E24AA</color>
+    <color name="purple_400">#9C27B0</color>
+    <color name="purple_500">#AB47BC</color>
+    <color name="purple_600">#BA68C8</color>
+    <color name="purple_700">#CE93D8</color>
+    <color name="purple_800">#E1BEE7</color>
+    <color name="purple_900">#F3E5F5</color>
+
+    <!-- Secondary Colors (Teal) for Dark Theme -->
+    <color name="teal_50">#004D40</color>
+    <color name="teal_100">#00695C</color>
+    <color name="teal_200">#00796B</color>
+    <color name="teal_300">#00897B</color>
+    <color name="teal_400">#009688</color>
+    <color name="teal_500">#26A69A</color>
+    <color name="teal_600">#4DB6AC</color>
+    <color name="teal_700">#80CBC4</color>
+    <color name="teal_800">#B2DFDB</color>
+    <color name="teal_900">#E0F2F1</color>
+
+    <!-- Status Colors for Dark Theme -->
+    <color name="colorPrimary">@color/purple_500</color>
+    <color name="colorPrimaryDark">@color/purple_700</color>
+    <color name="colorAccent">@color/teal_200</color>
+
+    <!-- UI Colors for Dark Theme -->
+    <color name="background">#FF121212</color>
+    <color name="surface">#FF1E1E1E</color>
+    <color name="error">#FFCF6679</color>
+
+    <!-- Text Colors for Dark Theme -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_disabled">#80FFFFFF</color>
+    <color name="text_inverse">@color/black</color>
+
+    <!-- Icon Colors for Dark Theme -->
+    <color name="icon_active">#B3FFFFFF</color>
+    <color name="icon_inactive">#80FFFFFF</color>
+
+    <!-- Divider Color for Dark Theme -->
+    <color name="divider">#1FFFFFFF</color>
+
+    <!-- Shadow Color for Dark Theme -->
+    <color name="shadow">#33000000</color>
+
+    <!-- Status Colors for Bluetooth (Dark Theme) -->
+    <color name="connected_green">#FF81C784</color>
+    <color name="connected_green_light">#FF2E7D32</color>
+    <color name="connecting_orange">#FFFFB74D</color>
+    <color name="connecting_orange_light">#FFEF6C00</color>
+    <color name="disconnected_red">#FFE57373</color>
+    <color name="disconnected_red_light">#FFC62828</color>
+    <color name="error_red">#FFF44336</color>
+    <color name="error_red_light">#FFB71C1C</color>
+
+    <!-- Button Colors for Dark Theme -->
+    <color name="button_primary">@color/purple_500</color>
+    <color name="button_secondary">@color/teal_200</color>
+    <color name="button_disabled">#FF424242</color>
+
+    <!-- Card Colors for Dark Theme -->
+    <color name="card_background">#FF1E1E1E</color>
+    <color name="card_shadow">#0DFFFFFF</color>
+
+    <!-- List Item Colors for Dark Theme -->
+    <color name="list_item_background">#FF1E1E1E</color>
+    <color name="list_item_selected">#FF2D2D2D</color>
+    <color name="list_divider">#FF2D2D2D</color>
+
+    <!-- EditText Colors for Dark Theme -->
+    <color name="edittext_background">#FF2D2D2D</color>
+    <color name="edittext_border">#FF757575</color>
+    <color name="edittext_focused">@color/purple_500</color>
+
+    <!-- Switch Colors for Dark Theme -->
+    <color name="switch_track">#FF757575</color>
+    <color name="switch_thumb">@color/white</color>
+
+    <!-- Progress Bar Colors for Dark Theme -->
+    <color name="progress_primary">@color/purple_500</color>
+    <color name="progress_background">#FF424242</color>
+
+    <!-- Tab Colors for Dark Theme -->
+    <color name="tab_selected">@color/purple_500</color>
+    <color name="tab_unselected">#FFBDBDBD</color>
+    <color name="tab_indicator">@color/purple_500</color>
+
+    <!-- Navigation Components for Dark Theme -->
+    <color name="navigation_background">#FF121212</color>
+    <color name="navigation_item_selected">#FF2D2D2D</color>
+    <color name="navigation_item_text">#FFFFFFFF</color>
+    <color name="navigation_item_icon">#FFBDBDBD</color>
+
+    <!-- Bluetooth Specific Colors for Dark Theme -->
+    <color name="bluetooth_blue">#FF64B5F6</color>
+    <color name="bluetooth_blue_light">#FF1565C0</color>
+    <color name="bluetooth_device_item">#FF1E1E1E</color>
+    <color name="bluetooth_device_selected">#FF2D2D2D</color>
+
+    <!-- Data Visualization Colors for Dark Theme -->
+    <color name="chart_line_primary">@color/purple_500</color>
+    <color name="chart_line_secondary">@color/teal_500</color>
+    <color name="chart_area">#4D9C27B0</color>
+    <color name="chart_grid">#4DFFFFFF</color>
+
+    <!-- Log Colors for Dark Theme -->
+    <color name="log_debug">#FF64B5F6</color>
+    <color name="log_info">#FF81C784</color>
+    <color name="log_warning">#FFFFB74D</color>
+    <color name="log_error">#FFE57373</color>
+
+    <!-- Gradient Colors for Dark Theme -->
+    <color name="gradient_start">@color/purple_500</color>
+    <color name="gradient_end">@color/teal_500</color>
+
+    <!-- Transparent Colors -->
+    <color name="transparent">#00000000</color>
+    <color name="semi_transparent_black">#80000000</color>
+    <color name="semi_transparent_white">#80FFFFFF</color>
+
+    <!-- Vibra Brand Colors for Dark Theme -->
+    <color name="vibra_primary">#FFBB86FC</color>
+    <color name="vibra_secondary">#FF03DAC6</color>
+    <color name="vibra_tertiary">#FF03DAC6</color>
+    <color name="vibra_background">#FF121212</color>
+    <color name="vibra_surface">#FF121212</color>
+    <color name="vibra_on_primary">#FF000000</color>
+    <color name="vibra_on_secondary">#FF000000</color>
+    <color name="vibra_on_background">#FFFFFFFF</color>
+    <color name="vibra_on_surface">#FFFFFFFF</color>
+
+    <!-- Material Design Color Attributes for Dark Theme -->
+    <color name="material_color_primary">@color/purple_500</color>
+    <color name="material_color_primary_variant">@color/purple_700</color>
+    <color name="material_color_secondary">@color/teal_200</color>
+    <color name="material_color_secondary_variant">@color/teal_700</color>
+    <color name="material_color_on_primary">@color/black</color>
+    <color name="material_color_on_secondary">@color/black</color>
+    <color name="material_color_surface">#FF121212</color>
+    <color name="material_color_background">#FF121212</color>
+    <color name="material_color_error">#FFCF6679</color>
+    <color name="material_color_on_surface">#FFFFFFFF</color>
+    <color name="material_color_on_background">#FFFFFFFF</color>
+    <color name="material_color_on_error">@color/black</color>
+
+    <!-- Nav Item Colors for Dark Theme -->
+    <color name="nav_item_color">#FFFFFFFF</color>
+    <color name="nav_item_selected">#FF64B5F6</color>
+    <!-- Tambahkan di bagian paling bawah file colors.xml: -->
+
+    <!-- Bottom Navigation Colors (Dark Theme) -->
+    <color name="bottom_nav_icon_tint_dark">#FFBDBDBD</color>
+    <color name="bottom_nav_text_tint_dark">#FFBDBDBD</color>
+    <color name="bottom_nav_background_dark">#FF1E1E1E</color>
+    <color name="bottom_nav_icon_tint_selector_dark">@color/vibra_secondary</color>
+    <color name="bottom_nav_text_tint_selector_dark">@color/vibra_secondary</color>
+    <color name="bottom_nav_background_selector_dark">@color/navigation_item_selected</color>
+
+    <!-- Chip Colors (Dark Theme) -->
+    <color name="chip_background_dark">#FF2D2D2D</color>
+    <color name="chip_stroke_dark">#FF424242</color>
+    <color name="chip_ripple_dark">#1FFFFFFF</color>
+
+    <!-- Bottom Navigation Colors (Dark Theme - additional) -->
+    <color name="bottom_nav_icon_tint_selector">@color/vibra_secondary</color>
+    <color name="bottom_nav_text_tint_selector">@color/vibra_secondary</color>
+    <color name="bottom_nav_background_selector">@color/navigation_item_selected</color>
+
+    <!-- Chip Colors (Dark Theme - additional) -->
+    <color name="chip_background">#FF2D2D2D</color>
+    <color name="chip_stroke">#FF424242</color>
+    <color name="chip_ripple">#1FFFFFFF</color>
+</resources>

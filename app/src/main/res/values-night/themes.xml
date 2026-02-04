@@ -1,7 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Vibra" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- Base application theme for Dark Mode -->
+    <style name="Theme.Vibra" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color for dark theme -->
+        <item name="colorPrimary">@color/vibra_primary</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/vibra_on_primary</item>
+
+        <!-- Secondary brand color for dark theme -->
+        <item name="colorSecondary">@color/vibra_secondary</item>
+        <item name="colorSecondaryVariant">@color/vibra_tertiary</item>
+        <item name="colorOnSecondary">@color/vibra_on_secondary</item>
+
+        <!-- Status bar color for dark theme -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Background colors for dark theme -->
+        <item name="android:windowBackground">@color/vibra_background</item>
+        <item name="android:colorBackground">@color/vibra_background</item>
+
+        <!-- Text colors for dark theme -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_disabled</item>
+
+        <!-- Material Components for dark theme -->
+        <item name="materialButtonStyle">@style/Widget.Vibra.Button</item>
+        <item name="cardViewStyle">@style/Widget.Vibra.CardView</item>
+
+        <!-- Toolbar for dark theme -->
+        <item name="toolbarStyle">@style/Widget.Vibra.Toolbar</item>
+
+        <!-- EditText for dark theme -->
+        <item name="editTextStyle">@style/Widget.Vibra.EditText</item>
+
+        <!-- Switch for dark theme -->
+        <item name="switchStyle">@style/Widget.Vibra.Switch</item>
+
+        <!-- Navigation Drawer for dark theme -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="navigationViewStyle">@style/Widget.Vibra.NavigationView</item>
+
+        <!-- Elevation for dark theme -->
+        <item name="elevationOverlayEnabled">true</item>
+    </style>
+
+    <!-- NavigationView Style for Dark Theme -->
+    <style name="Widget.Vibra.NavigationView" parent="Widget.MaterialComponents.NavigationView">
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
+        <item name="itemBackground">@drawable/nav_item_background</item>
+        <item name="android:background">@color/navigation_background</item>
+        <item name="android:elevation">16dp</item>
+        <item name="itemHorizontalPadding">16dp</item>
+        <item name="itemIconPadding">16dp</item>
     </style>
 </resources>
