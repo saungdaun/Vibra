@@ -5,11 +5,12 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.pm.PackageManager
-import android.util.Log
+import timber.log.Timber
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import zaujaani.vibra.BuildConfig
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -35,13 +36,12 @@ object BluetoothSocketManager {
 
     private val _receivedData = MutableSharedFlow<String>(
         replay = 0,
-        extraBufferCapacity = 10000 // 🔥 PERBESAR BUFFER UNTUK STREAMING
+        extraBufferCapacity = 10000
     )
     val receivedData: SharedFlow<String> = _receivedData.asSharedFlow()
 
     private val sendChannel = Channel<String>(Channel.UNLIMITED)
 
-    // 🔥 VARIABLE BARU UNTUK STREAMING
     private val _rawDataStream = MutableSharedFlow<ByteArray>(
         replay = 0,
         extraBufferCapacity = 10000
@@ -55,12 +55,12 @@ object BluetoothSocketManager {
 
     fun connect(device: BluetoothDevice) {
         if (isConnecting.get()) {
-            Log.d("BluetoothSocketManager", "⚠️ Already connecting, skipping")
+            Timber.tag("BluetoothSocketManager").d("⚠️ Already connecting, skipping")
             return
         }
 
         if (isConnected.get()) {
-            Log.d("BluetoothSocketManager", "⚠️ Already connected, skipping")
+            Timber.tag("BluetoothSocketManager").d("⚠️ Already connected, skipping")
             return
         }
 
@@ -74,7 +74,7 @@ object BluetoothSocketManager {
                     device.address
                 }
 
-                Log.d("BluetoothSocketManager", "🔗 Connecting to $deviceName...")
+                Timber.tag("BluetoothSocketManager").i("🔗 Connecting to $deviceName...")
 
                 val context = BluetoothGateway.getContext()
 
@@ -92,13 +92,15 @@ object BluetoothSocketManager {
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
                         try {
-                            BluetoothAdapter.getDefaultAdapter()?.cancelDiscovery()
+                            // Gunakan adapter dari BluetoothGateway untuk menghindari deprecation
+                            val adapter = BluetoothGateway.getBluetoothAdapter()
+                            adapter?.cancelDiscovery()
                         } catch (e: NoSuchMethodError) {
-                            Log.w("BluetoothSocketManager", "cancelDiscovery not available")
+                            Timber.tag("BluetoothSocketManager").w("cancelDiscovery not available")
                         }
                     }
                 } catch (e: SecurityException) {
-                    Log.w("BluetoothSocketManager", "Cannot cancel discovery", e)
+                    Timber.tag("BluetoothSocketManager").w(e, "Cannot cancel discovery")
                 }
 
                 disconnectInternal()
@@ -130,7 +132,7 @@ object BluetoothSocketManager {
                 outputStream = socket?.outputStream
 
                 startListening()
-                startRawStreaming() // 🔥 MULAI STREAMING RAW DATA
+                startRawStreaming()
 
                 BluetoothReconnectEngine.remember(device)
                 BluetoothReconnectEngine.start()
@@ -139,28 +141,28 @@ object BluetoothSocketManager {
                 isChannelActive.set(true)
                 BluetoothStateMachine.updateSafe(ConnectionState.Connected(deviceName))
 
-                Log.d("BluetoothSocketManager", "✅ Connected successfully to $deviceName")
+                Timber.tag("BluetoothSocketManager").i("✅ Connected successfully to $deviceName")
 
             } catch (e: TimeoutCancellationException) {
                 BluetoothStateMachine.updateSafe(
                     ConnectionState.Error("Connection timeout (10s)")
                 )
-                Log.e("BluetoothSocketManager", "⏱️ Connection timeout", e)
+                Timber.tag("BluetoothSocketManager").e(e, "⏱️ Connection timeout")
             } catch (e: SecurityException) {
                 BluetoothStateMachine.updateSafe(
                     ConnectionState.Error("Permission error: ${e.message}")
                 )
-                Log.e("BluetoothSocketManager", "🔒 Permission error", e)
+                Timber.tag("BluetoothSocketManager").e(e, "🔒 Permission error")
             } catch (e: IOException) {
                 BluetoothStateMachine.updateSafe(
                     ConnectionState.Disconnected
                 )
-                Log.e("BluetoothSocketManager", "🔌 IO Error", e)
+                Timber.tag("BluetoothSocketManager").e(e, "🔌 IO Error")
             } catch (e: Exception) {
                 BluetoothStateMachine.updateSafe(
                     ConnectionState.Error("Unexpected error: ${e.message}")
                 )
-                Log.e("BluetoothSocketManager", "❌ Unexpected error", e)
+                Timber.tag("BluetoothSocketManager").e(e, "❌ Unexpected error")
             } finally {
                 isConnecting.set(false)
             }
@@ -200,7 +202,7 @@ object BluetoothSocketManager {
     private fun startListening() {
         listenJob?.cancel()
         listenJob = scope.launch {
-            Log.d("BluetoothSocketManager", "🎧 Start listening for data...")
+            Timber.tag("BluetoothSocketManager").i("🎧 Start listening for data...")
             val buffer = ByteArray(4096)
             var bufferPos = 0
 
@@ -239,22 +241,21 @@ object BluetoothSocketManager {
                     delay(1)
                 }
             } catch (e: IOException) {
-                Log.d("BluetoothSocketManager", "📵 Connection lost (expected on disconnect)")
+                Timber.tag("BluetoothSocketManager").d("📵 Connection lost (expected on disconnect)")
                 if (isConnected.get()) {
                     BluetoothStateMachine.updateSafe(ConnectionState.Disconnected)
                     disconnectInternal()
                 }
             } catch (e: Exception) {
-                Log.e("BluetoothSocketManager", "Listen error: ${e.message}", e)
+                Timber.tag("BluetoothSocketManager").e(e, "Listen error")
                 disconnectInternal()
             }
         }
     }
 
-    // 🔥 FUNGSI BARU UNTUK STREAMING RAW DATA
     private fun startRawStreaming() {
         scope.launch {
-            Log.d("BluetoothSocketManager", "📡 Starting raw data streaming...")
+            Timber.tag("BluetoothSocketManager").i("📡 Starting raw data streaming...")
             val buffer = ByteArray(1024)
 
             try {
@@ -269,19 +270,21 @@ object BluetoothSocketManager {
                         val data = buffer.copyOf(bytesRead)
                         _rawDataStream.emit(data)
 
-                        // Konversi ke string untuk debugging
-                        val text = String(data).trim()
-                        if (text.isNotEmpty()) {
-                            Log.d("BluetoothSocketManager", "📥 RAW: $text")
+                        // Log raw data untuk debugging (hanya di debug build)
+                        if (BuildConfig.DEBUG) {
+                            val text = String(data).trim()
+                            if (text.isNotEmpty()) {
+                                Timber.tag("BluetoothSocketManager").d("📥 RAW: $text")
+                            }
                         }
                     }
 
                     delay(10)
                 }
             } catch (e: IOException) {
-                Log.d("BluetoothSocketManager", "Raw streaming stopped")
+                Timber.tag("BluetoothSocketManager").d("Raw streaming stopped")
             } catch (e: Exception) {
-                Log.e("BluetoothSocketManager", "Raw streaming error", e)
+                Timber.tag("BluetoothSocketManager").e(e, "Raw streaming error")
             }
         }
     }
@@ -292,11 +295,10 @@ object BluetoothSocketManager {
                 try {
                     val text = String(rawData).trim()
                     if (text.isNotEmpty()) {
-                        // Otomatis tambahkan ke receivedData juga
                         _receivedData.emit(text)
                     }
                 } catch (e: Exception) {
-                    Log.e("BluetoothSocketManager", "Error processing raw data", e)
+                    Timber.tag("BluetoothSocketManager").e(e, "Error processing raw data")
                 }
             }
         }
@@ -305,18 +307,18 @@ object BluetoothSocketManager {
     private fun startSendProcessor() {
         sendJob?.cancel()
         sendJob = scope.launch {
-            Log.d("BluetoothSocketManager", "📤 Send processor started")
+            Timber.tag("BluetoothSocketManager").i("📤 Send processor started")
             while (isActive) {
                 try {
                     val command = sendChannel.receive()
 
                     if (!isConnected.get()) {
-                        Log.w("BluetoothSocketManager", "Not connected, skipping: $command")
+                        Timber.tag("BluetoothSocketManager").w("Not connected, skipping: $command")
                         continue
                     }
 
                     if (!isChannelActive.get()) {
-                        Log.w("BluetoothSocketManager", "Channel not active, skipping: $command")
+                        Timber.tag("BluetoothSocketManager").w("Channel not active, skipping: $command")
                         continue
                     }
 
@@ -332,15 +334,15 @@ object BluetoothSocketManager {
                     outputStream?.write(commandWithNewline.toByteArray())
                     outputStream?.flush()
 
-                    Log.d("BluetoothSocketManager", "📤 Sent: $command")
+                    Timber.tag("BluetoothSocketManager").d("📤 Sent: $command")
 
                     delay(50)
 
                 } catch (e: CancellationException) {
-                    Log.d("BluetoothSocketManager", "🚫 Send processor cancelled")
+                    Timber.tag("BluetoothSocketManager").d("🚫 Send processor cancelled")
                     break
                 } catch (e: Exception) {
-                    Log.e("BluetoothSocketManager", "Send error: ${e.javaClass.simpleName}: ${e.message}")
+                    Timber.tag("BluetoothSocketManager").e(e, "Send error")
                     if (e is IOException) {
                         disconnectInternal()
                         break
@@ -356,24 +358,26 @@ object BluetoothSocketManager {
                 val connected = isConnected.get() && socket?.isConnected == true
                 val channelActive = isChannelActive.get()
 
-                Log.d("BluetoothSocketManager",
-                    "Send attempt: connected=$connected, channelActive=$channelActive, command=$command")
+                Timber.tag("BluetoothSocketManager").d(
+                    "Send attempt: connected=$connected, channelActive=$channelActive, command=$command"
+                )
 
                 if (connected && channelActive) {
                     sendChannel.send(command)
-                    Log.d("BluetoothSocketManager", "✅ Command sent to channel: $command")
+                    Timber.tag("BluetoothSocketManager").d("✅ Command sent to channel: $command")
                 } else {
-                    Log.w("BluetoothSocketManager",
-                        "Cannot send: connected=$connected, channelActive=$channelActive, command=$command")
+                    Timber.tag("BluetoothSocketManager").w(
+                        "Cannot send: connected=$connected, channelActive=$channelActive, command=$command"
+                    )
                 }
             } catch (e: Exception) {
-                Log.e("BluetoothSocketManager", "Failed to queue command: ${e.message}", e)
+                Timber.tag("BluetoothSocketManager").e(e, "Failed to queue command")
             }
         }
     }
 
     private fun disconnectInternal() {
-        Log.d("BluetoothSocketManager", "🛑 Starting disconnectInternal")
+        Timber.tag("BluetoothSocketManager").i("🛑 Starting disconnectInternal")
 
         isChannelActive.set(false)
         isConnected.set(false)
@@ -384,28 +388,31 @@ object BluetoothSocketManager {
 
         try {
             inputStream?.close()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Timber.tag("BluetoothSocketManager").d("Input stream close error: ${e.message}")
         }
 
         try {
             outputStream?.close()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Timber.tag("BluetoothSocketManager").d("Output stream close error: ${e.message}")
         }
 
         try {
             socket?.close()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Timber.tag("BluetoothSocketManager").d("Socket close error: ${e.message}")
         }
 
         inputStream = null
         outputStream = null
         socket = null
 
-        Log.d("BluetoothSocketManager", "🛑 Disconnected and cleaned up")
+        Timber.tag("BluetoothSocketManager").i("🛑 Disconnected and cleaned up")
     }
 
     fun disconnect() {
-        Log.d("BluetoothSocketManager", "🛑 Disconnect called")
+        Timber.tag("BluetoothSocketManager").i("🛑 Disconnect called")
         connectJob?.cancel()
 
         scope.launch {
@@ -419,11 +426,13 @@ object BluetoothSocketManager {
         return isConnected.get() && isChannelActive.get() && socket?.isConnected == true
     }
 
-    fun getConnectionStatus(): String {
-        return when {
-            isConnected.get() -> "CONNECTED"
-            isConnecting.get() -> "CONNECTING"
-            else -> "DISCONNECTED"
-        }
-    }
+    // Hapus fungsi yang tidak digunakan, atau beri annotation @Suppress jika ingin dipertahankan
+    // @Suppress("unused")
+    // fun getConnectionStatus(): String {
+    //     return when {
+    //         isConnected.get() -> "CONNECTED"
+    //         isConnecting.get() -> "CONNECTING"
+    //         else -> "DISCONNECTED"
+    //     }
+    // }
 }

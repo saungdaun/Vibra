@@ -26,25 +26,40 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- Untuk file logging (opsional) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <!-- ========== FEATURES ========== -->
+    <!-- Hapus duplikat dan gabungkan dengan required="false" untuk kompatibilitas -->
     <uses-feature
         android:name="android.hardware.bluetooth"
-        android:required="true" />
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.bluetooth_le"
-        android:required="true" />
+        android:required="false" />
+
+    <!-- Tambahkan jika app menggunakan Bluetooth Classic (RFCOMM) -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_classic"
+        android:required="false" />
 
     <application
+        android:name=".VibraApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="Vibra"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Vibra"
         android:usesCleartextTraffic="true"
-        tools:targetApi="36">
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="36"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <!-- FOREGROUND SERVICE -->
         <service
@@ -59,7 +74,8 @@
             android:exported="true"
             android:theme="@style/Theme.Vibra"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -18,24 +18,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:textSize="14sp"
-            android:textAlignment="center"
-            android:text="Disconnected"
-            android:background="#F44336"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="16dp"/>
+            android:text="❌ Disconnected"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@color/disconnected"/>
 
-        <!-- Sensor Data Container -->
+        <!-- Sensor Data Display -->
         <LinearLayout
             android:id="@+id/sensorContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp"
-            android:background="#F5F5F5"
-            android:layout_marginBottom="16dp">
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
 
-            <!-- Trip Distance & STA -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📊 SENSOR DATA"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="0.000 km"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:gravity="center"/>
 
@@ -58,12 +66,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="STA 00+000"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:gravity="center"/>
             </LinearLayout>
 
-            <!-- Speed & Elevation -->
+            <TextView
+                android:id="@+id/tvMeterRemainder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="0.0 km/h"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -84,12 +100,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0.00 m"
-                    android:textSize="14sp"
+                    android:text="0.00 m/s²"
+                    android:textSize="16sp"
                     android:gravity="center"/>
             </LinearLayout>
 
-            <!-- Info Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,8 +117,33 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="0.00 V"
-                    android:textSize="12sp"
+                    android:textSize="16sp"
                     android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvTotalOdo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ODO: 0.0 m"
+                    android:textSize="16sp"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="State: READY"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
                 <TextView
                     android:id="@+id/tvSessionId"
@@ -111,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="SID: 0"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -120,278 +160,430 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Packets: 0"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:gravity="center"/>
             </LinearLayout>
 
-            <!-- State & Last Update -->
+            <TextView
+                android:id="@+id/tvErrorCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Errors: 0"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvLastUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last: 0ms ago"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:textColor="@color/gray"/>
+
+            <!-- Calibration Info -->
+            <TextView
+                android:id="@+id/tvCalibration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚙️ Wheel: 2.000m, Z: 0.000m/s²"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray"/>
+        </LinearLayout>
+
+        <!-- Calibration Controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚙️ CALIBRATION"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Wheel Circumference -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="4dp">
+                android:layout_marginBottom="8dp">
 
-                <TextView
-                    android:id="@+id/tvState"
+                <EditText
+                    android:id="@+id/etWheelValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:hint="Wheel (m)"
+                    android:inputType="numberDecimal"
+                    android:text="2.0"/>
+
+                <Button
+                    android:id="@+id/btnSetWheel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="State: READY"
-                    android:textSize="12sp"
-                    android:gravity="center"/>
+                    android:text="SET"
+                    android:layout_marginStart="8dp"/>
 
-                <TextView
-                    android:id="@+id/tvLastUpdate"
+                <Button
+                    android:id="@+id/btnGetWheel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Last: -"
-                    android:textSize="10sp"
-                    android:gravity="center"
-                    android:textColor="#666666"/>
+                    android:text="GET"
+                    android:layout_marginStart="8dp"/>
             </LinearLayout>
 
-            <!-- Raw Data Display -->
             <TextView
-                android:id="@+id/tvRawData"
+                android:id="@+id/tvWheelInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="RAW: -"
-                android:textSize="10sp"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="#666666"/>
-
-        </LinearLayout>
-
-        <!-- Log Header with Controls -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Log"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/tvLogCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 logs"
+                android:text="Wheel: 2.000 m"
                 android:textSize="12sp"
-                android:textColor="#666666"/>
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
 
-            <Switch
-                android:id="@+id/switchAutoScroll"
-                android:layout_width="wrap_content"
+            <!-- Smoothing -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Auto"
-                android:textSize="10sp"
-                android:checked="true"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
-            <Button
-                android:id="@+id/btnRefresh"
-                android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etSmoothValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:hint="Smooth/Alpha"
+                    android:inputType="numberDecimal"
+                    android:text="0.25"/>
+
+                <Button
+                    android:id="@+id/btnSetSmooth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SET"
+                    android:layout_marginStart="8dp"/>
+
+                <Button
+                    android:id="@+id/btnGetSmooth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="GET"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Z Offset -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Refresh"
-                android:paddingHorizontal="8dp"
-                android:textSize="10sp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <EditText
+                    android:id="@+id/etZOffsetValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:hint="Z Offset (m/s²)"
+                    android:inputType="numberDecimal"
+                    android:text="0.0"/>
+
+                <Button
+                    android:id="@+id/btnSetZOffset"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SET"
+                    android:layout_marginStart="8dp"/>
+
+                <Button
+                    android:id="@+id/btnGetZOffset"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="GET"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvZOffsetInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Z Offset: 0.000 m/s²"
+                android:textSize="12sp"
+                android:gravity="center"/>
         </LinearLayout>
 
-        <!-- Log List -->
-        <ListView
-            android:id="@+id/logListView"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:background="#f8f8f8"
-            android:divider="#dddddd"
-            android:dividerHeight="1dp"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Command Buttons Grid -->
+        <!-- Control Buttons Grid -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="3"
-            android:rowCount="3"
-            android:layout_marginBottom="16dp">
+            android:rowCount="4"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
 
             <Button
                 android:id="@+id/btnStart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="START"
-                android:backgroundTint="#4CAF50"/>
+                android:layout_margin="4dp"
+                android:text="▶️ START"
+                android:backgroundTint="@color/green"/>
 
             <Button
                 android:id="@+id/btnStop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="STOP"
-                android:backgroundTint="#F44336"/>
+                android:layout_margin="4dp"
+                android:text="⏹️ STOP"
+                android:backgroundTint="@color/red"/>
 
             <Button
                 android:id="@+id/btnPause"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="PAUSE"
-                android:backgroundTint="#FF9800"/>
+                android:layout_margin="4dp"
+                android:text="⏸️ PAUSE"
+                android:backgroundTint="@color/orange"/>
 
             <Button
                 android:id="@+id/btnResetTrip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="RESET"
-                android:backgroundTint="#9C27B0"/>
+                android:layout_margin="4dp"
+                android:text="🔄 RESET"/>
 
             <Button
-                android:id="@+id/btnGetData"
+                android:id="@+id/btnHardReset"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="GET DATA"/>
-
-            <Button
-                android:id="@+id/btnGetBattery"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="BATTERY"/>
+                android:layout_margin="4dp"
+                android:text="💣 HARD RESET"/>
 
             <Button
                 android:id="@+id/btnNewSession"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="NEW SESSION"/>
+                android:layout_margin="4dp"
+                android:text="🆕 NEW SESSION"/>
 
             <Button
                 android:id="@+id/btnNextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="NEXT VIEW"/>
+                android:layout_margin="4dp"
+                android:text="👁️ NEXT VIEW"/>
 
             <Button
-                android:id="@+id/btnClearLogs"
+                android:id="@+id/btnGetData"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:text="CLEAR LOGS"/>
+                android:layout_margin="4dp"
+                android:text="📊 GET DATA"/>
+
+            <Button
+                android:id="@+id/btnGetBattery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:text="🔋 BATTERY"/>
         </GridLayout>
 
-        <!-- Calibration Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Calibration"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
+        <!-- Additional Utility Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
 
-            <EditText
-                android:id="@+id/etWheelValue"
+            <Button
+                android:id="@+id/btnGetSession"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Wheel (m)"
-                android:inputType="numberDecimal"/>
+                android:text="📋 SESSION"
+                android:layout_marginEnd="4dp"/>
 
             <Button
-                android:id="@+id/btnSetWheel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SET"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <EditText
-                android:id="@+id/etSmoothValue"
+                android:id="@+id/btnGetCal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Smoothing"
-                android:inputType="numberDecimal"/>
+                android:text="⚙️ CAL"
+                android:layout_marginHorizontal="4dp"/>
 
             <Button
-                android:id="@+id/btnSetSmooth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SET"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/etZOffsetValue"
+                android:id="@+id/btnGetErrors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Z Offset"
-                android:inputType="numberDecimal"/>
-
-            <Button
-                android:id="@+id/btnSetZOffset"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SET"/>
+                android:text="❌ ERRORS"
+                android:layout_marginStart="4dp"/>
         </LinearLayout>
 
-        <!-- Manual Command -->
+        <!-- Raw Command -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
 
             <EditText
                 android:id="@+id/etCommand"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Manual command"
-                android:imeOptions="actionSend"/>
+                android:layout_weight="2"
+                android:hint="Raw command..."
+                android:imeOptions="actionSend"
+                android:inputType="text"/>
 
             <Button
                 android:id="@+id/btnSendCommand"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SEND"
+                android:layout_marginStart="8dp"/>
+
+            <Button
+                android:id="@+id/btnHelp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="HELP"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- Debug Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
+
+            <Button
+                android:id="@+id/btnDebugTrip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🐛 DEBUG"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/btnClearLogs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🧹 CLEAR LOGS"
+                android:layout_marginHorizontal="4dp"/>
+
+            <Button
+                android:id="@+id/btnRefresh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔄 REFRESH"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- Stream Stats -->
+        <TextView
+            android:id="@+id/tvStreamStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 Stream: 0 pps, Total: 0"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvRawData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="RAW: "
+            android:textSize="10sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:padding="8dp"/>
+
+        <!-- Log Display -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📝 LOGS"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginTop="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tvLogCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Logs: 0"
+                android:textSize="12sp"/>
+
+            <Switch
+                android:id="@+id/switchAutoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SEND"/>
+                android:text="Auto-scroll"
+                android:textSize="12sp"/>
         </LinearLayout>
+
+        <ListView
+            android:id="@+id/logListView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:padding="8dp"
+            android:background="@android:color/white"
+            android:elevation="1dp"/>
 
     </LinearLayout>
 </ScrollView>

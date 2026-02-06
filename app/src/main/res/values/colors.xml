@@ -194,4 +194,20 @@
         <color name="sensor_update">#E8F5E8</color>
         <color name="refresh">#E3F2FD</color>
 
+
+
+
+        <!-- Warning color -->
+        <color name="warning">#FF9800</color>
+
+        <!-- Button colors -->
+        <color name="green">#4CAF50</color>
+        <color name="red">#F44336</color>
+        <color name="orange">#FF9800</color>
+        <color name="blue">#2196F3</color>
+
+        <!-- Gray -->
+        <color name="gray">#9E9E9E</color>
+
+
 </resources>

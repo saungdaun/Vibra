@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -28,12 +27,14 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import zaujaani.vibra.core.bluetooth.BluetoothGateway
 import zaujaani.vibra.core.bluetooth.BluetoothStateMachine
 import zaujaani.vibra.core.bluetooth.ConnectionState
+import zaujaani.vibra.core.bluetooth.VibraBluetoothService
+import zaujaani.vibra.core.logger.LoggerEngine
 import zaujaani.vibra.core.permission.PermissionManager
 import android.annotation.SuppressLint
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         if (activityAlive) {
             val allGranted = permissions.values.all { it }
             if (allGranted) {
-                Log.d("MainActivity", "✅ All permissions granted")
+                Timber.tag("MainActivity").d("✅ All permissions granted")
                 startBluetoothService()
             } else {
                 AlertDialog.Builder(this)
@@ -71,12 +72,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MainActivity", "onCreate called")
-
-        zaujaani.vibra.core.exception.AppExceptionHandler.initialize()
+        Timber.tag("MainActivity").d("onCreate called")
 
         setContentView(R.layout.activity_main)
 
+        // Inisialisasi BluetoothGateway
         BluetoothGateway.init(applicationContext)
 
         setupToolbar()
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         setupBluetoothObserver()
 
-        Log.d("MainActivity", "Activity setup complete")
+        Timber.tag("MainActivity").d("Activity setup complete")
     }
 
     override fun onStart() {
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("MainActivity", "Activity destroyed")
+        Timber.tag("MainActivity").d("Activity destroyed")
         activityAlive = false
         serviceStarted = false
         bluetoothObserverJob?.cancel()
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        Log.d("MainActivity", "Toolbar set up")
+        Timber.tag("MainActivity").d("Toolbar set up")
     }
 
     private fun setupNavigation() {
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        Log.d("MainActivity", "NavController found")
+        Timber.tag("MainActivity").d("NavController found")
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -144,14 +144,14 @@ class MainActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 true
             } catch (e: IllegalArgumentException) {
-                Log.e("MainActivity", "Navigation destination not found: ${menuItem.itemId}")
+                Timber.tag("MainActivity").e(e, "Navigation destination not found: ${menuItem.itemId}")
                 drawerLayout.closeDrawer(GravityCompat.START)
                 false
             }
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            Log.d("MainActivity", "📍 Navigated to: ${destination.label} (ID: ${destination.id})")
+            Timber.tag("MainActivity").d("📍 Navigated to: ${destination.label} (ID: ${destination.id})")
         }
     }
 
@@ -188,10 +188,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkAndRequestPermissions() {
         if (!PermissionManager.hasAll(this)) {
-            Log.d("MainActivity", "🔧 Requesting permissions")
+            Timber.tag("MainActivity").d("🔧 Requesting permissions")
             requestMissingPermissions()
         } else {
-            Log.d("MainActivity", "✅ All permissions already granted")
+            Timber.tag("MainActivity").d("✅ All permissions already granted")
             startBluetoothService()
         }
     }
@@ -200,18 +200,18 @@ class MainActivity : AppCompatActivity() {
         if (!activityAlive) return
 
         if (serviceStarted) {
-            Log.d("MainActivity", "⚠️ Service already started, skipping")
+            Timber.tag("MainActivity").d("⚠️ Service already started, skipping")
             return
         }
 
         if (!hasRequiredPermissions()) {
-            Log.e("MainActivity", "❌ Missing Bluetooth permission -> service NOT started")
+            Timber.tag("MainActivity").e("❌ Missing Bluetooth permission -> service NOT started")
             Toast.makeText(this, "Bluetooth permissions required", Toast.LENGTH_SHORT).show()
             return
         }
 
         try {
-            val serviceIntent = Intent(this, zaujaani.vibra.core.bluetooth.VibraBluetoothService::class.java)
+            val serviceIntent = Intent(this, VibraBluetoothService::class.java)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent)
@@ -220,19 +220,33 @@ class MainActivity : AppCompatActivity() {
             }
 
             serviceStarted = true
-            Log.d("MainActivity", "🚀 Bluetooth service started successfully")
+            Timber.tag("MainActivity").d("🚀 Bluetooth service started successfully")
 
         } catch (e: SecurityException) {
-            Log.e("MainActivity", "🔒 SecurityException starting service", e)
+            Timber.tag("MainActivity").e(e, "🔒 SecurityException starting service")
             Toast.makeText(this, "Permission denied: ${e.message}", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
-            Log.e("MainActivity", "❌ Error starting Bluetooth service", e)
+            Timber.tag("MainActivity").e(e, "❌ Error starting Bluetooth service")
             Toast.makeText(this, "Failed to start service", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_toolbar, menu)
+
+        // Add v3.7 specific items
+        menu.add(0, 1001, 0, "v3.7 Commands").apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        }
+
+        menu.add(0, 1002, 0, "Debug Trip").apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        }
+
+        menu.add(0, 1003, 0, "Get Calibration").apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        }
+
         return true
     }
 
@@ -254,6 +268,18 @@ class MainActivity : AppCompatActivity() {
                 BluetoothGateway.disconnect()
                 true
             }
+            1001 -> { // v3.7 Commands
+                showV37CommandsDialog()
+                true
+            }
+            1002 -> { // Debug Trip
+                LoggerEngine.sendDebugTrip()
+                true
+            }
+            1003 -> { // Get Calibration
+                LoggerEngine.sendGetCal()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -267,18 +293,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestMissingPermissions() {
-        val missingPermissions = PermissionManager.requiredPermissions()
-            .filter { permission ->
-                ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
-            }
-            .toTypedArray()
+        val missingPermissions = PermissionManager.getMissingPermissions(this)
 
         if (missingPermissions.isNotEmpty()) {
             AlertDialog.Builder(this)
                 .setTitle("Permissions Required")
                 .setMessage("Bluetooth permissions are needed to connect to devices.")
                 .setPositiveButton("Grant") { _, _ ->
-                    requestPermissionLauncher.launch(missingPermissions)
+                    requestPermissionLauncher.launch(missingPermissions.toTypedArray())
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -302,20 +324,20 @@ class MainActivity : AppCompatActivity() {
             is ConnectionState.Connected -> {
                 val deviceName = state.deviceName ?: "Unknown Device"
                 toolbar.subtitle = "✅ Connected to $deviceName"
-                Log.d("MainActivity", "✅ Bluetooth Connected to $deviceName")
+                Timber.tag("MainActivity").i("✅ Bluetooth Connected to $deviceName")
             }
             is ConnectionState.Connecting -> {
                 val deviceName = state.deviceName ?: "Unknown Device"
                 toolbar.subtitle = "🔄 Connecting to $deviceName..."
-                Log.d("MainActivity", "🔄 Bluetooth Connecting to $deviceName")
+                Timber.tag("MainActivity").i("🔄 Bluetooth Connecting to $deviceName")
             }
             is ConnectionState.Disconnected -> {
                 toolbar.subtitle = "❌ Bluetooth Disconnected"
-                Log.d("MainActivity", "❌ Bluetooth Disconnected")
+                Timber.tag("MainActivity").i("❌ Bluetooth Disconnected")
             }
             is ConnectionState.Error -> {
                 toolbar.subtitle = "⚠️ Bluetooth Error"
-                Log.e("MainActivity", "⚠️ Bluetooth Error: ${state.message}")
+                Timber.tag("MainActivity").e("⚠️ Bluetooth Error: ${state.message}")
             }
         }
     }
@@ -328,12 +350,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         val devices = BluetoothGateway.bondedDevices()
-        Log.d("MainActivity", "Found ${devices.size} bonded devices")
+        Timber.tag("MainActivity").d("Found ${devices.size} bonded devices")
 
         if (devices.isEmpty()) {
             AlertDialog.Builder(this)
                 .setTitle("No Paired Devices")
-                .setMessage("Please pair with RoadsenseLogger-v3.4 first in Android Bluetooth settings.")
+                .setMessage("Please pair with RoadsenseLogger-v3.7 first in Android Bluetooth settings.")
                 .setPositiveButton("Open Bluetooth Settings") { _, _ ->
                     val intent = Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
                     startActivity(intent)
@@ -365,7 +387,7 @@ class MainActivity : AppCompatActivity() {
 
                 deviceList.add(Pair(name, device))
             } catch (e: SecurityException) {
-                Log.e("MainActivity", "SecurityException accessing device", e)
+                Timber.tag("MainActivity").e(e, "SecurityException accessing device")
             }
         }
 
@@ -384,12 +406,53 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Select Bluetooth Device")
             .setItems(deviceNames) { _, which ->
                 val selectedDevice = deviceList[which].second
-                Log.d("MainActivity", "Selected device: ${deviceList[which].first}")
+                Timber.tag("MainActivity").d("Selected device: ${deviceList[which].first}")
 
                 if (hasRequiredPermissions()) {
                     BluetoothGateway.connect(selectedDevice)
                 } else {
                     Toast.makeText(this@MainActivity, "Bluetooth permission required", Toast.LENGTH_SHORT).show()
+                    requestMissingPermissions()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    // Fungsi baru untuk menampilkan dialog command v3.7
+    private fun showV37CommandsDialog() {
+        val commands = arrayOf(
+            "START",
+            "STOP",
+            "PAUSE",
+            "RESETTRIP",
+            "HARDRESET",
+            "GETDATA",
+            "GETBATTERY",
+            "GETSESSION",
+            "NEWSESSION",
+            "NEXTVIEW",
+            "GETWHEEL",
+            "SETWHEEL,2.0",
+            "GETSMOOTH",
+            "SETSMOOTH,0.25",
+            "GETZOFFSET",
+            "SETZOFFSET,0.0",
+            "SYNCTIME,2024-01-01T12:00:00",
+            "GETCAL",
+            "GETERRORS",
+            "DEBUGTRIP",
+            "CLEARBUFFER",
+            "HELP"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("v3.7 Commands")
+            .setItems(commands) { _, which ->
+                if (hasRequiredPermissions()) {
+                    zaujaani.vibra.core.bluetooth.BluetoothSocketManager.sendCommand(commands[which])
+                    Toast.makeText(this, "Sent: ${commands[which]}", Toast.LENGTH_SHORT).show()
+                } else {
                     requestMissingPermissions()
                 }
             }

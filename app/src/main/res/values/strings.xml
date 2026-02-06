@@ -133,5 +133,8 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="_0_000_km">0.000 km</string>
+    <string name="sta_00_000">STA 00+000</string>
 
 </resources>

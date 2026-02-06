@@ -1,6 +1,6 @@
 package zaujaani.vibra.core.bluetooth
 
-import android.util.Log
+import timber.log.Timber
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 object BluetoothStateMachine {
-    private val TAG = "BluetoothStateMachine"
 
     private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     val state: StateFlow<ConnectionState> = _state.asStateFlow()
@@ -20,7 +19,7 @@ object BluetoothStateMachine {
 
     fun updateSafe(newState: ConnectionState) {
         if (isUpdating.getAndSet(true)) {
-            Log.w(TAG, "⚠️ Update already in progress, skipping: $newState")
+            Timber.tag("BluetoothStateMachine").w("⚠️ Update already in progress, skipping: $newState")
             return
         }
 
@@ -29,7 +28,7 @@ object BluetoothStateMachine {
             if (current != newState) {
                 uiScope.launch {
                     _state.value = newState
-                    Log.d(TAG, "🔄 State changed: $current → $newState")
+                    Timber.tag("BluetoothStateMachine").i("🔄 State changed: $current → $newState")
                 }
             }
         } finally {
